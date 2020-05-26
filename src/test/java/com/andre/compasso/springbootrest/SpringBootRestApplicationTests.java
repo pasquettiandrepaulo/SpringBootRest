@@ -29,40 +29,38 @@ import static org.apache.logging.log4j.ThreadContext.isEmpty;
 import static org.springframework.test.util.AssertionErrors.*;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 class SpringBootRestApplicationTests {
 
 	@Autowired
 	ICidadeService iCidadeService;
 
 	@Autowired
-	ICidadeRepository iCidadeRepository;
-
-	@Autowired
 	IClienteService iClienteService;
 
-	@Order(1)
 	@Test
-	void cadastrarCidade() {
-		Cidade cidade = new Cidade("Cidate Teste", "TEST");
-		assertNotNull("cadastrar cidade - nome", cidade.getNome());
-		assertNotNull("cadastrar cidade - estado", cidade.getEstado());
-		this.iCidadeRepository.saveAndFlush(cidade);
-		assertNotNull("cadastrar cidade - cidade", cidade.getId());
+	void testeA() {
+		try {
+			Cidade cidade = new Cidade("Cidate Teste", "TEST");
+			assertNotNull("cadastrar cidade - nome", cidade.getNome());
+			assertNotNull("cadastrar cidade - estado", cidade.getEstado());
+			this.iCidadeService.save(cidade);
+			assertNotNull("cadastrar cidade - cidade", cidade.getId());
+		} catch (RuleException e) {
+			e.printStackTrace();
+		}
 	}
 
-	@Order(2)
 	@Test
-	public void cadastrarCliente(){
+	public void testeB(){
 		try {
 			Cidade cidade = this.iCidadeService.findById(1);
-			assertNull("cadastrar cliente - cidade null", cidade);
-			Cliente cliente = new Cliente("Cliente Teste", EnumSexo.MASCULINO, new Date(), 25, cidade);
+			assertNotNull("cadastrar cliente - cidade", cidade);
+			Cliente cliente = new Cliente("Cliente Teste", EnumSexo.MASCULINO.getCodigo(), new Date(), 25, 1);
 			assertNotNull("cadastrar cliente - nome completo",cliente.getNomeCompleto());
 			assertNotNull("cadastrar cliente - sexo",cliente.getSexo());
 			assertNotNull("cadastrar cliente - datanacimento",cliente.getDataNascimento());
 			assertNotNull("cadastrar cliente - idade",cliente.getIdade());
-			assertNotNull("cadastrar cliente - cidade",cliente.getCidade());
 			this.iClienteService.save(cliente);
 			assertNotNull("cadastrar cliente - cliente", cliente.getId());
 		} catch (RuleException e) {
@@ -70,9 +68,8 @@ class SpringBootRestApplicationTests {
 		}
 	}
 
-	@Order(3)
 	@Test
-	public void consultarCidadePorParametro(){
+	public void testeC(){
 		try {
 			List<Cidade> cidadesNome = this.iCidadeService.getCidadesByParamAndField("Cidate Teste", NOME);
 			assertNotNull("consultar cidade - nome", cidadesNome);
@@ -83,9 +80,8 @@ class SpringBootRestApplicationTests {
 		}
 	}
 
-	@Order(4)
 	@Test
-	public void consultarClientePorNome(){
+	public void testeD(){
 		try {
 			List<Cliente> clientes = this.iClienteService.getClientesByNomeCompleto("Cliente Teste");
 			assertNotNull("consultar cliente - nome", clientes);
@@ -94,9 +90,8 @@ class SpringBootRestApplicationTests {
 		}
 	}
 
-	@Order(5)
 	@Test
-	public void consultarClientePorId(){
+	public void testeE(){
 		try {
 			Cliente cliente = this.iClienteService.findById(1);
 			assertNotNull("consultar cliente - id", cliente);
@@ -105,9 +100,8 @@ class SpringBootRestApplicationTests {
 		}
 	}
 
-	@Order(6)
 	@Test
-	public void alterarNomeCliente(){
+	public void testeF(){
 		try {
 			Cliente cliente1 = this.iClienteService.findById(1);
 			this.iClienteService.alterarNome(1, "Cliente Teste Alterado");
@@ -118,13 +112,12 @@ class SpringBootRestApplicationTests {
 		}
 	}
 
-	@Order(7)
 	@Test
-	public void deletarCliente(){
+	public void testeG(){
 		try {
 			this.iClienteService.delete(1);
-			Cliente cliente = this.iClienteService.findById(1);
-			assertNotNull("deletar cliente", cliente);
+			boolean exists = this.iClienteService.existsById(1);
+			assertEquals("deletar cliente",false, exists);
 		} catch (RuleException e) {
 			e.printStackTrace();
 		}

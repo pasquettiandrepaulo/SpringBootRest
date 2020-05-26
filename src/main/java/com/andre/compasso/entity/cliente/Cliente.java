@@ -3,6 +3,8 @@ package com.andre.compasso.entity.cliente;
 import com.andre.compasso.entity.cidade.Cidade;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,34 +22,44 @@ public class Cliente implements Serializable {
     @SequenceGenerator(name = "seq_cliente", sequenceName = "seq_cliente", allocationSize = 1)
     @GeneratedValue(generator = "seq_cliente", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
+    @ApiModelProperty(hidden = true)
     private Integer id;
 
+    @ApiModelProperty(notes = "Nome cliente", example = "Cliente Novo")
     @Column(name = "nomecompleto")
     private String nomeCompleto;
 
     @Column(name = "sexo")
+    @ApiModelProperty(notes = "Sexo cliente 0-Feminino, 1-Masculino")
     private Integer sexo;
 
+    @ApiModelProperty(notes = "Data nascimento cliente dd/mm/yyyy", example = "14/06/1994")
     @Column(name = "datanascimento")
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dataNascimento;
 
+    @ApiModelProperty(notes = "Idade cliente")
     @Column(name = "idade")
     private Integer idade;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE})
+    @ApiModelProperty(hidden = true)
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
 
+    @Transient
+    @ApiModelProperty(notes = "Cidade id")
+    private Integer cidadeId;
+
     public Cliente() {}
 
-    public Cliente(String nomeCompleto, EnumSexo sexo, Date dataNascimento, Integer idade, Cidade cidade) {
+    public Cliente(String nomeCompleto, Integer sexo, Date dataNascimento, Integer idade, Integer cidadeId) {
         this.nomeCompleto = nomeCompleto;
-        this.sexo = sexo.ordinal();
+        this.sexo = sexo;
         this.dataNascimento = dataNascimento;
         this.idade = idade;
-        this.cidade = cidade;
+        this.cidadeId = cidadeId;
     }
 
     public Integer getId() {
@@ -66,12 +78,12 @@ public class Cliente implements Serializable {
         this.nomeCompleto = nomeCompleto;
     }
 
-    public String getSexo() {
-        return EnumSexo.getSexoByCodigo(this.sexo).getNome();
+    public Integer getSexo() {
+        return this.sexo;
     }
 
-    public void setSexo(EnumSexo sexo) {
-        this.sexo = sexo.ordinal();
+    public void setSexo(Integer sexo) {
+        this.sexo = sexo;
     }
 
     public Date getDataNascimento() {
@@ -96,6 +108,14 @@ public class Cliente implements Serializable {
 
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
+    }
+
+    public Integer getCidadeId() {
+        return cidadeId;
+    }
+
+    public void setCidadeId(Integer cidadeId) {
+        this.cidadeId = cidadeId;
     }
 
     @Override

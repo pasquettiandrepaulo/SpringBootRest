@@ -1,5 +1,7 @@
 package com.andre.compasso.entity.cidade;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,12 +16,15 @@ public class Cidade implements Serializable {
     @SequenceGenerator(name = "seq_cidade", sequenceName = "seq_cidade", allocationSize = 1)
     @GeneratedValue(generator = "seq_cidade", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
+    @ApiModelProperty(hidden = true, accessMode = ApiModelProperty.AccessMode.READ_WRITE)
     private Integer id;
 
     @Column(name = "nome")
+    @ApiModelProperty(notes = "Nome cidade", example = "Passo Fundo")
     private String nome;
 
     @Column(name = "estado ")
+    @ApiModelProperty(notes = "Estado cidade", example = "RS")
     private String estado;
 
     public Cidade(){}

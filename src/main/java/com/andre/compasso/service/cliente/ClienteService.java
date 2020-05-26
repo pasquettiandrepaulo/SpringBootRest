@@ -53,7 +53,7 @@ public class ClienteService implements IClienteService {
     public void save(Cliente cliente) throws RuleException {
 
         this.validarCliente(cliente);
-        cliente.setCidade(this.iCidadeService.findById(cliente.getCidade().getId()));
+        cliente.setCidade(this.iCidadeService.findById(cliente.getCidadeId()));
         this.iClienteRepository.save(cliente);
     }
 
@@ -74,12 +74,9 @@ public class ClienteService implements IClienteService {
         if (cliente.getSexo() == null)
             throw new RuleException(ResponseEntity.badRequest().body(new ResponseMessage(BAD_REQUEST.value(), String.format(MENSAGEM_ERRO_CAMPO_INVALIDO, "idade"), cliente.getIdade())));
 
-        if (cliente.getCidade() == null)
-            throw new RuleException(ResponseEntity.badRequest().body(new ResponseMessage(BAD_REQUEST.value(), String.format(MENSAGEM_ERRO_CAMPO_INVALIDO, "cidade"), cliente.getCidade())));
-
-        if (cliente.getCidade().getId() != null)
-            if (!this.iCidadeService.existsById(cliente.getCidade().getId()))
-                throw new RuleException(ResponseEntity.badRequest().body(new ResponseMessage(BAD_REQUEST.value(), String.format(MENSAGEM_ERRO_CAMPO_INVALIDO, "cidade"), cliente.getCidade().getId())));
+        if (cliente.getCidadeId() != null)
+            if (!this.iCidadeService.existsById(cliente.getCidadeId()))
+                throw new RuleException(ResponseEntity.badRequest().body(new ResponseMessage(BAD_REQUEST.value(), String.format(MENSAGEM_ERRO_CAMPO_INVALIDO, "cidade"), cliente.getCidadeId())));
     }
 
     @Override
